@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OA办公自动化系统</title>
+    <style>
+        :root {
+            --oa-blue: #2d8cf0; 
+            --bg-gray: #f4f7f9; 
+        }
+
+        body { 
+            margin: 0; 
+            background: var(--bg-gray); 
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif; 
+            overflow-x: hidden; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        /* OA蓝色抬头 */
+        .oa-header { 
+            background: var(--oa-blue); 
+            padding: 40px 20px 60px; 
+            color: white; 
+            position: relative;
+        }
+        .oa-header h1 { margin: 0; font-size: 20px; font-weight: 500; }
+        .oa-header .status-tag { 
+            position: absolute; 
+            right: 20px; 
+            top: 40px; 
+            background: rgba(255,255,255,0.2); 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 13px;
+        }
+
+        /* 内容卡片 */
+        .main-container { margin-top: -30px; padding: 0 15px 120px; }
+        
+        .oa-card { 
+            background: #fff; 
+            border-radius: 12px; 
+            padding: 24px 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            position: relative;
+        }
+
+        .seal {
+            position: absolute;
+            right: 15px;
+            top: 70px;
+            width: 85px;
+            height: 85px;
+            border: 3px solid #f2f2f2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #eee;
+            font-weight: bold;
+            transform: rotate(-20deg);
+            pointer-events: none;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .info-row { display: flex; margin-bottom: 20px; font-size: 15px; border-bottom: 1px solid #f9f9f9; padding-bottom: 12px; }
+        .info-label { width: 90px; color: #999; flex-shrink: 0; }
+        .info-value { color: #333; flex: 1; font-weight: 500; }
+        
+        /* 核心包包内容框 */
+        .highlight-content { 
+            background: #f0f7ff; 
+            border: 1px dashed var(--oa-blue); 
+            padding: 18px; 
+            border-radius: 8px; 
+            margin: 25px 0; 
+            text-align: center; 
+            color: var(--oa-blue); 
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        /* 底部按钮 */
+        .oa-footer { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: #fff; display: flex; padding: 15px; gap: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+            padding-bottom: calc(15px + env(safe-area-inset-bottom));
+            z-index: 100;
+        }
+        .oa-btn { 
+            flex: 1; height: 50px; border-radius: 8px; border: none; 
+            font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        
+        .btn-deny { background: #fa5151; color: #fff; } /* 红色拒绝 */
+        .btn-pass { background: #07c160; color: #fff; } /* 绿色同意 */
+
+        /* 特效图标 */
+        .icon-effect { position: fixed; pointer-events: none; animation: fly 0.8s ease-out forwards; font-size: 26px; z-index: 999; }
+        @keyframes fly { 
+            0% { transform: translateY(0) scale(1); opacity: 1; } 
+            100% { transform: translateY(-120px) scale(1.6); opacity: 0; } 
+        }
+    </style>
+</head>
+<body>
+
+<div class="oa-header">
+    <div class="status-tag">待处理</div>
+    <h1>审批详情</h1>
+    <p style="opacity: 0.8; font-size: 13px; margin-top: 8px;">单据号：BB20260110-CERT</p>
+</div>
+
+<div class="main-container">
+    <div class="oa-card">
+        <div class="seal">主人认定</div>
+        <div class="info-row">
+            <div class="info-label">申请人</div>
+            <div class="info-value">小包包</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">申请事项</div>
+            <div class="info-value">“第一名亲亲小奴隶”资质认证</div>
+        </div>
+
+        <div class="highlight-content">
+            认定结论：乖宝宝包是主人最好的小奴隶
+        </div>
+
+        <div style="font-size: 13px; color: #999; line-height: 1.6; background: #fafafa; padding: 10px; border-radius: 4px;">
+            <strong style="color: #666;">备注说明：</strong><br>
+            请审批人慎重考虑。一旦点击“就不同意”，小包包会生超级大胖胖气。
+        </div>
+    </div>
+</div>
+
+<div class="oa-footer">
+    <button class="oa-btn btn-deny" onclick="handleRefuse(event)">就不同意</button>
+    <button class="oa-btn btn-pass" onclick="handleAgree(event)">超级同意</button>
+</div>
+
+<script>
+    function createEffect(e, char) {
+        var x = e.clientX || (e.touches && e.touches[0].clientX) || (e.changedTouches && e.changedTouches[0].clientX);
+        var y = e.clientY || (e.touches && e.touches[0].clientY) || (e.changedTouches && e.changedTouches[0].clientY);
+        
+        for (var i = 0; i < 8; i++) {
+            var el = document.createElement('div');
+            el.className = 'icon-effect';
+            el.innerHTML = char;
+            el.style.left = (x - 12 + (Math.random() * 40 - 20)) + 'px';
+            el.style.top = (y - 20) + 'px';
+            document.body.appendChild(el);
+            (function(element) {
+                setTimeout(function() { if(element) element.remove(); }, 800);
+            })(el);
+        }
+    }
+
+    function handleAgree(e) {
+        createEffect(e, '❤️');
+        setTimeout(function() {
+            alert("✅ 审批通过！\n我就知道主人最喜欢小包包啦！");
+        }, 150);
+    }
+
+    function handleRefuse(e) {
+        createEffect(e, '❌');
+        if (navigator.vibrate) navigator.vibrate(50);
+        setTimeout(function() {
+            alert("哼！(｡•ˇ‸ˇ•｡) \n小包包生气了，不理你了！");
+        }, 150);
+    }
+</script>
+
+</body>
+</html>
